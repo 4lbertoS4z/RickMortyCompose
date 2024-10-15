@@ -2,6 +2,7 @@ package com.example.rickandmortycompose.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,17 +51,17 @@ fun RickDetailScreen(
                     contentDescription = "character image",
                     modifier = Modifier
                         .size(250.dp)
-                        .padding()
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .clip(RoundedCornerShape(15))
+                        .border(4.dp, Color.Red, shape = RoundedCornerShape(0, 15, 0, 24)),
                     contentScale = ContentScale.Crop
                 )
                 Box(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(15))
+                        .padding(top = 50.dp)
+                        .clip(RoundedCornerShape(6))
                         .background(Color(0x80000000)) // Fondo semitransparente para mejor lectura
                         .padding(16.dp)
-
                         .align(Alignment.CenterHorizontally)
 
                 ) {
@@ -69,9 +70,13 @@ fun RickDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(text = "Nombre: ${it.name}", color = Color.White)
-                        Text(text = "Estado: ${if (it.isAlive) "Vivo" else "Muerto"}", color = Color.White)
+                        Text(
+                            text = "Estado: ${if (it.isAlive) "Vivo" else "Muerto"}",
+                            color = Color.White
+                        )
                         Text(text = "Género: ${it.gender}", color = Color.White)
                         Text(text = "Especie: ${it.species}", color = Color.White)
+                        Text(text = "Origen: ${it.origin}", color = Color.White)
 
                     }
                 }

@@ -9,10 +9,15 @@ data class CharacterResponse(
     @SerializedName("status") val status:String,
     @SerializedName("image") val image:String,
     @SerializedName("gender") val gender:String,
-    @SerializedName("species") val species:String
+    @SerializedName("species") val species:String,
+    @SerializedName("origin") val origin:Origin
+
 ){
     fun toPresentation(): CharacterModel {
-        return CharacterModel(id=id,name=name,image=image,isAlive= status == "Alive",gender=gender,species=species)
+        return CharacterModel(id=id,name=name,image=image,isAlive= status == "Alive",gender=gender,species=species, origin = origin.name)
 
     }
 }
+data class Origin(
+    @SerializedName("name") val name: String
+)
