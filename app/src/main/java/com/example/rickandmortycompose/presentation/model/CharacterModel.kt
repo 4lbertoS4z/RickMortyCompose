@@ -5,4 +5,8 @@ data class CharacterModel(
     val name: String,
     val isAlive: Boolean,
     val image: String,
+    val gender: String,
+    val species: String,
+
+
 )

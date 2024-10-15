@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.rickandmortycompose.presentation.AppNavigation
 import com.example.rickandmortycompose.presentation.RickListScreen
 import com.example.rickandmortycompose.ui.theme.RickAndMortyComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RickAndMortyComposeTheme {
-                RickListScreen()
+                AppNavigation()
             }
         }
     }

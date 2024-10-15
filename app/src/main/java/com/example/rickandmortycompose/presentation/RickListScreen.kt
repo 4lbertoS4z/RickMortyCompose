@@ -3,6 +3,7 @@ package com.example.rickandmortycompose.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -40,7 +42,10 @@ import com.example.rickandmortycompose.presentation.model.CharacterModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun RickListScreen(rickListViewModel: RickListViewModel = hiltViewModel()) {
+fun RickListScreen(
+    navController: NavHostController,
+    rickListViewModel: RickListViewModel = hiltViewModel()
+) {
     val characters = rickListViewModel.characters.collectAsLazyPagingItems()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -66,6 +71,7 @@ fun RickListScreen(rickListViewModel: RickListViewModel = hiltViewModel()) {
             characters.loadState.refresh is LoadState.NotLoading && characters.itemCount == 0 -> {
                 Text(text = "Todavía no hay personajes")
             }
+
             characters.loadState.hasError -> {
                 Box(
                     Modifier
@@ -75,8 +81,9 @@ fun RickListScreen(rickListViewModel: RickListViewModel = hiltViewModel()) {
                     Text(text = "Ha ocurrido un error")
                 }
             }
+
             else -> {
-                CharactersList(characters, listState)
+                CharactersList(characters, listState,navController)
                 if (characters.loadState.append is LoadState.Loading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
@@ -107,25 +114,27 @@ fun RickListScreen(rickListViewModel: RickListViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun CharactersList(characters: LazyPagingItems<CharacterModel>, listState: LazyListState) {
+fun CharactersList(characters: LazyPagingItems<CharacterModel>, listState: LazyListState, navController: NavHostController) {
     LazyColumn(state = listState) {
         items(characters.itemCount) {
             characters[it]?.let { characterModel ->
-                ItemList(characterModel)
+                ItemList(characterModel,navController)
             }
         }
     }
 }
 
 @Composable
-fun ItemList(characterModel: CharacterModel) {
+fun ItemList(characterModel: CharacterModel, navController: NavHostController) {
     Box(
         modifier = Modifier
             .padding(34.dp)
             .clip(RoundedCornerShape(15))
             .border(4.dp, Color.Red, shape = RoundedCornerShape(0, 15, 0, 24))
             .fillMaxWidth()
-            .height(250.dp), contentAlignment = Alignment.BottomCenter
+            .height(250.dp)
+            .clickable { navController.navigate("rickDetail/${characterModel.id}") },
+        contentAlignment = Alignment.BottomCenter
     ) {
         AsyncImage(
             model = characterModel.image,
@@ -148,7 +157,7 @@ fun ItemList(characterModel: CharacterModel) {
                     )
                 ),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text(text = characterModel.name, color = Color.White, fontSize = 18.sp)
         }
 

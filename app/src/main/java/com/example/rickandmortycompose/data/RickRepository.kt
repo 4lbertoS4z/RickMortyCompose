@@ -20,4 +20,8 @@ class RickRepository @Inject constructor(val api: RickMortyApiService) {
                 CharacterPagingSource(api)
             }).flow
     }
+    suspend fun  getCharacterById(characterId: String): CharacterModel? {
+        return api.getCharacterById(characterId)?.toPresentation()
+
+    }
 }
