@@ -20,7 +20,7 @@ class CharacterPagingSource @Inject constructor(private val api: RickMortyApiSer
             val response = api.getCharacters(page)
             val characters = response.results
 
-            val prevKey = if (page > 0) page - 1 else null
+            val prevKey = if (page > 1) page - 1 else null
             val nextKey = if (response.information.next != null) page + 1 else null
 
             LoadResult.Page(
