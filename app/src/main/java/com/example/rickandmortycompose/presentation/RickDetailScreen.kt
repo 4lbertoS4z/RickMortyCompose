@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.rickandmortycompose.R
+import com.example.rickandmortycompose.presentation.viewModel.RickDetailViewModel
 
 @Composable
 fun RickDetailScreen(
@@ -50,7 +51,7 @@ fun RickDetailScreen(
                     model = it.image,
                     contentDescription = "character image",
                     modifier = Modifier
-                        .size(250.dp)
+                        .size(300.dp)
                         .align(Alignment.CenterHorizontally)
                         .clip(RoundedCornerShape(15))
                         .border(4.dp, Color.Red, shape = RoundedCornerShape(0, 15, 0, 24)),
@@ -77,7 +78,7 @@ fun RickDetailScreen(
                         Text(text = "Género: ${it.gender}", color = Color.White)
                         Text(text = "Especie: ${it.species}", color = Color.White)
                         Text(text = "Origen: ${it.origin}", color = Color.White)
-
+                        Text(text = "Fecha Creacion: ${it.created}", color = Color.White)
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.rickandmortycompose.presentation
+package com.example.rickandmortycompose.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData

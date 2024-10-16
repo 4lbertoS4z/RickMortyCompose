@@ -39,6 +39,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.rickandmortycompose.R
 import com.example.rickandmortycompose.presentation.model.CharacterModel
+import com.example.rickandmortycompose.presentation.viewModel.RickListViewModel
 import kotlinx.coroutines.launch
 
 @Composable
