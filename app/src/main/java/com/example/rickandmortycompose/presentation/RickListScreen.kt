@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,8 +22,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +58,7 @@ fun RickListScreen(
     val characters = rickListViewModel.characters.collectAsLazyPagingItems()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+    var searchText by rememberSaveable { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -58,44 +67,62 @@ fun RickListScreen(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // SearchBar
+            TextField(
+                value = searchText,
+                onValueChange = {
+                    searchText = it
+                    rickListViewModel.updateSearchQuery(it) // Actualizar búsqueda en el ViewModel
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                placeholder = { Text(text = "Buscar personajes...") },
+                singleLine = true,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            // Filtrar la lista de personajes en base a `searchText`
 
-        when {
-            //Carga inicial
-            characters.loadState.refresh is LoadState.Loading && characters.itemCount == 0 -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(64.dp), color = Color.White
-                    )
-                }
-            }
-            //Estado vacio
-            characters.loadState.refresh is LoadState.NotLoading && characters.itemCount == 0 -> {
-                Text(text = "Todavía no hay personajes")
-            }
-
-            characters.loadState.hasError -> {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(Color.Red), contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Ha ocurrido un error")
-                }
-            }
-
-            else -> {
-                CharactersList(characters, listState,navController)
-                if (characters.loadState.append is LoadState.Loading) {
+            // Estado de la lista y carga
+            when {
+                characters.loadState.refresh is LoadState.Loading && characters.itemCount == 0 -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(64.dp), color = Color.White
                         )
                     }
                 }
+                characters.loadState.refresh is LoadState.NotLoading && characters.itemCount == 0 -> {
+                    Text(text = "Todavía no hay personajes")
+                }
+                characters.loadState.hasError -> {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(Color.Red), contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Ha ocurrido un error")
+                    }
+                }
+                else -> {
+                    CharactersList(characters, listState, navController)
+                    if (characters.loadState.append is LoadState.Loading) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(64.dp), color = Color.White
+                            )
+                        }
+                    }
+                }
             }
         }
 
-        // FloatingActionButton
+        // FloatingActionButton para regresar al inicio de la lista
         FloatingActionButton(
             onClick = {
                 coroutineScope.launch {
@@ -113,7 +140,6 @@ fun RickListScreen(
         }
     }
 }
-
 @Composable
 fun CharactersList(characters: LazyPagingItems<CharacterModel>, listState: LazyListState, navController: NavHostController) {
     LazyColumn(state = listState) {
